@@ -1,18 +1,18 @@
 # 📉 Automated Customer Churn Scoring Pipeline
 
-## 🚀 Overview
+##  Overview
 This project implements a production-grade **MLOps pipeline** for batch customer churn prediction. It automates the end-to-end process of data ingestion, processing, model inference, and results storage using **Apache Airflow**, **PySpark**, and **AWS**.
 
 The pipeline is **event-driven**, designed to detect new data arriving in an S3 bucket, process it using distributed computing techniques (Spark), generate churn probabilities using a pre-trained Keras model, and load the results into a Production Database (PostgreSQL).
 
-## 🏗️ Architecture
+##  Architecture
 1.  **Ingestion**: An **Airflow S3 Key Sensor** detects new raw data (`customer_churn.csv`) in the AWS S3 bucket.
 2.  **ETL**: **PySpark** performs data cleaning, One-Hot Encoding, and Min-Max scaling.
 3.  **Inference**: A containerized **TensorFlow/Keras** model generates batch predictions.
 4.  **Loading**: Results are archived back to **S3** and inserted into an **AWS RDS PostgreSQL** database.
 5.  **Monitoring**: Real-time **Email Notifications** (SMTP) report pipeline success or failure.
 
-## 🛠️ Tech Stack
+## Tech Stack
 *   **Orchestration**: Apache Airflow 2.7
 *   **Data Processing**: PySpark 3.5
 *   **Machine Learning**: TensorFlow / Keras & Scikit-Learn
@@ -22,7 +22,7 @@ The pipeline is **event-driven**, designed to detect new data arriving in an S3 
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 ```bash
 ├── dags/
 │   └── churn_scoring_dag.py    # Airflow DAG definition
@@ -44,7 +44,7 @@ The pipeline is **event-driven**, designed to detect new data arriving in an S3 
 
 ---
 
-## ⚙️ Setup & Installation
+##  Setup & Installation
 
 ### 1. Prerequisites
 *   **Docker Desktop** (running with at least 8GB RAM recommended)
@@ -91,7 +91,7 @@ docker-compose up --build
 
 ---
 
-## 🏃‍♂️ Usage
+##  Usage
 
 1.  **Access Airflow UI**:
     *   Open [http://localhost:8080](http://localhost:8080)
@@ -110,7 +110,7 @@ docker-compose up --build
 
 ---
 
-## 🧪 Testing
+##  Testing
 To test connections before running the full pipeline, you can use the utility script inside the container or locally:
 
 ```bash
@@ -118,5 +118,5 @@ To test connections before running the full pipeline, you can use the utility sc
 docker exec -it airflow_webserver python src/test_connections.py
 ```
 
-## 📜 License
+##  License
 This project is licensed under the MIT License. Only for educational purposes.
