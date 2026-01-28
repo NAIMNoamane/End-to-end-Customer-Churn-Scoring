@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables (Sensitive!)
+.env
+
+# Data (Large files)
+data/
+*.csv
+
+# Logs (Airflow and System)
+logs/
+*.log
+
+# Docker
+.docker/
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db

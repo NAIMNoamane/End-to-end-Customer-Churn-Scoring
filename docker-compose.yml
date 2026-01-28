@@ -1,0 +1,77 @@
+services:
+  # 1. PostgreSQL for Airflow Metadata + App Data
+  postgres:
+    image: postgres:15
+    container_name: churn_postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Airflow Init (Setup DB and User)
+  airflow-init:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    command: >
+      bash -c "airflow db init &&
+      airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin@example.com --password admin"
+
+  # 3. Airflow Webserver
+  airflow-webserver:
+    build: .
+    container_name: airflow_webserver
+    depends_on:
+      - postgres
+      - airflow-init
+    ports:
+      - "8080:8080"
+    environment: &airflow-common-env
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      # SMTP / Email Notifications
+      - AIRFLOW__SMTP__SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_USER=${SMTP_USER}
+      - AIRFLOW__SMTP__SMTP_PASSWORD=${SMTP_PASSWORD}
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=${SMTP_MAIL_FROM}
+      - NOTIFICATION_EMAIL=${NOTIFICATION_EMAIL}
+    volumes:
+      - ./dags:/app/airflow/dags
+      - ./data:/app/data
+      - ./logs:/app/airflow/logs
+    command: airflow webserver
+
+  # 4. Airflow Scheduler
+  airflow-scheduler:
+    build: .
+    container_name: airflow_scheduler
+    depends_on:
+      - postgres
+      - airflow-init
+    environment: *airflow-common-env
+    volumes:
+      - ./dags:/app/airflow/dags
+      - ./data:/app/data
+      - ./logs:/app/airflow/logs
+    command: airflow scheduler
+
+volumes:
+  postgres_data:
