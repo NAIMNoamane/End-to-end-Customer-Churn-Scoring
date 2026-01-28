@@ -6,6 +6,9 @@ This project implements a production-grade **MLOps pipeline** for batch customer
 The pipeline is **event-driven**, designed to detect new data arriving in an S3 bucket, process it using distributed computing techniques (Spark), generate churn probabilities using a pre-trained Keras model, and load the results into a Production Database (PostgreSQL).
 
 ##  Architecture
+<p align="center">
+<img src="./architecture.jfif" alt="architecture image" width="700" height="600" align=center></p>
+
 1.  **Ingestion**: An **Airflow S3 Key Sensor** detects new raw data (`customer_churn.csv`) in the AWS S3 bucket.
 2.  **ETL**: **PySpark** performs data cleaning, One-Hot Encoding, and Min-Max scaling.
 3.  **Inference**: A containerized **TensorFlow/Keras** model generates batch predictions.
